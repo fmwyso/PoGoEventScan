@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PoGo Event Scan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-deep: #0b1220;
+        --ink: #eef3fb;
+        --ink-muted: #9aadc4;
+        --checked: #5ba8e8;
+        --checked-soft: rgba(91, 168, 232, 0.14);
+        --accepted: #e86b6b;
+        --accepted-soft: rgba(232, 107, 107, 0.14);
+        --line: rgba(238, 243, 251, 0.12);
+        --panel: rgba(12, 20, 36, 0.78);
+        --accent: #5ba8e8;
+        --font-display: "Outfit", sans-serif;
+        --font-body: "IBM Plex Sans", sans-serif;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+      }
+
+      body {
+        color: var(--ink);
+        font-family: var(--font-body);
+        background: var(--bg-deep);
+        overflow-x: hidden;
+      }
+
+      .atmosphere {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background:
+          radial-gradient(ellipse 80% 50% at 12% -8%, #1a4a7a 0%, transparent 55%),
+          radial-gradient(ellipse 60% 45% at 92% 8%, #7a2a32 0%, transparent 50%),
+          radial-gradient(ellipse 70% 60% at 50% 110%, #12203a 0%, transparent 55%),
+          linear-gradient(165deg, #0b1220 0%, #121c32 48%, #0a101c 100%);
+        animation: sky-shift 18s ease-in-out infinite alternate;
+      }
+
+      @keyframes sky-shift {
+        from {
+          filter: hue-rotate(0deg) saturate(1);
+        }
+        to {
+          filter: hue-rotate(8deg) saturate(1.08);
+        }
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .thanks {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 1.25rem clamp(1rem, 3vw, 2.5rem) 0;
+      }
+
+      .thanks-copy {
+        margin: 0;
+        max-width: 48rem;
+        color: var(--ink-muted);
+        font-size: 0.95rem;
+        line-height: 1.45;
+      }
+
+      .thanks-copy a {
+        color: var(--checked);
+        font-weight: 600;
+        text-decoration: underline;
+        text-decoration-color: rgba(91, 168, 232, 0.45);
+        text-underline-offset: 0.14em;
+      }
+
+      .thanks-copy a:hover {
+        color: #8ec5f5;
+        text-decoration-color: rgba(142, 197, 245, 0.8);
+      }
+
+      .top {
+        display: grid;
+        gap: 1.25rem;
+        padding: 1.25rem clamp(1rem, 3vw, 2.5rem) 1rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      @media (min-width: 800px) {
+        .top {
+          grid-template-columns: 1fr auto;
+          align-items: end;
+        }
+      }
+
+      .brand {
+        margin: 0 0 0.35rem;
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: clamp(1.75rem, 4vw, 2.6rem);
+        letter-spacing: -0.03em;
+        line-height: 1;
+        color: var(--ink);
+        animation: brand-in 0.7s ease both;
+      }
+
+      @keyframes brand-in {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      #event-name {
+        margin: 0;
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+        letter-spacing: -0.01em;
+        color: var(--ink-muted);
+      }
+
+      .meta {
+        margin: 0.45rem 0 0;
+        color: var(--ink-muted);
+        font-size: 0.92rem;
+      }
+
+      .status-block {
+        display: grid;
+        gap: 0.65rem;
+        justify-items: stretch;
+        min-width: min(100%, 280px);
+      }
+
+      .poll-status {
+        margin: 0;
+        text-align: right;
+        font-size: 0.82rem;
+        color: var(--ink-muted);
+      }
+
+      .poll-status[data-state="error"] {
+        color: #ff8f8f;
+      }
+
+      .poll-status[data-state="ok"] {
+        color: var(--checked);
+      }
+
+      .controls {
+        display: grid;
+        gap: 0.55rem;
+      }
+
+      .update-btn {
+        appearance: none;
+        border: 1px solid rgba(91, 168, 232, 0.45);
+        border-radius: 10px;
+        background: linear-gradient(180deg, #3d7eb8 0%, #2a5f91 100%);
+        color: var(--ink);
+        font: 700 0.95rem var(--font-display);
+        letter-spacing: -0.01em;
+        padding: 0.7rem 1rem;
+        cursor: pointer;
+        transition: transform 0.15s ease, filter 0.15s ease, opacity 0.15s ease;
+      }
+
+      .update-btn:hover:not(:disabled) {
+        filter: brightness(1.08);
+        transform: translateY(-1px);
+      }
+
+      .update-btn:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
+      .update-btn:disabled {
+        opacity: 0.55;
+        cursor: wait;
+      }
+
+      .search input {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--panel);
+        color: var(--ink);
+        font: 500 0.95rem var(--font-body);
+        padding: 0.7rem 0.9rem;
+        outline: none;
+        backdrop-filter: blur(8px);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .search input::placeholder {
+        color: rgba(154, 173, 196, 0.7);
+      }
+
+      .search input:focus {
+        border-color: rgba(91, 168, 232, 0.55);
+        box-shadow: 0 0 0 3px rgba(91, 168, 232, 0.15);
+      }
+
+      .boards {
+        display: grid;
+        gap: 1rem;
+        padding: 0.5rem clamp(1rem, 3vw, 2.5rem) 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      @media (min-width: 800px) {
+        .boards {
+          grid-template-columns: 1fr 1fr;
+          gap: 1.25rem;
+        }
+      }
+
+      .board {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        backdrop-filter: blur(10px);
+        min-height: 50vh;
+        display: flex;
+        flex-direction: column;
+        animation: board-rise 0.65s ease both;
+      }
+
+      .board-accepted {
+        animation-delay: 0.08s;
+      }
+
+      @keyframes board-rise {
+        from {
+          opacity: 0;
+          transform: translateY(18px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      .board-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 1rem 1.15rem 0.85rem;
+        border-bottom: 1px solid var(--line);
+        position: sticky;
+        top: 0;
+        background: inherit;
+        border-radius: 16px 16px 0 0;
+        z-index: 1;
+      }
+
+      .board-head-main {
+        display: flex;
+        align-items: baseline;
+        gap: 0.75rem;
+        min-width: 0;
+      }
+
+      .board-head h2 {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: 1.15rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .board-checked .board-head h2 {
+        color: var(--checked);
+      }
+
+      .board-accepted .board-head h2 {
+        color: var(--accepted);
+      }
+
+      .count {
+        margin: 0;
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 1.5rem;
+        letter-spacing: -0.03em;
+        line-height: 1;
+      }
+
+      .board-checked .count {
+        color: var(--checked);
+      }
+
+      .board-accepted .count {
+        color: var(--accepted);
+      }
+
+      .copy-btn {
+        appearance: none;
+        flex-shrink: 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(243, 247, 241, 0.06);
+        color: var(--ink);
+        font: 600 0.8rem var(--font-body);
+        padding: 0.4rem 0.7rem;
+        cursor: pointer;
+        transition: background 0.15s ease, border-color 0.15s ease;
+      }
+
+      .copy-btn:hover:not(:disabled) {
+        background: rgba(243, 247, 241, 0.12);
+        border-color: rgba(243, 247, 241, 0.28);
+      }
+
+      .copy-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .copy-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: grid;
+        place-items: center;
+        padding: 1rem;
+        background: rgba(5, 10, 20, 0.72);
+        backdrop-filter: blur(4px);
+      }
+
+      .copy-modal[hidden] {
+        display: none;
+      }
+
+      .copy-modal-panel {
+        width: min(640px, 100%);
+        max-height: min(80vh, 720px);
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+        padding: 1.15rem 1.2rem 1.2rem;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: #121c30;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+        animation: modal-in 0.2s ease both;
+      }
+
+      @keyframes modal-in {
+        from {
+          opacity: 0;
+          transform: translateY(10px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      .copy-modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .copy-modal-head h2 {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: 1.2rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .copy-modal-close {
+        appearance: none;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(243, 247, 241, 0.06);
+        color: var(--ink);
+        font: 600 0.85rem var(--font-body);
+        padding: 0.35rem 0.65rem;
+        cursor: pointer;
+      }
+
+      .copy-modal-close:hover {
+        background: rgba(243, 247, 241, 0.12);
+      }
+
+      .copy-modal-text {
+        width: 100%;
+        min-height: 280px;
+        flex: 1;
+        resize: vertical;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: rgba(6, 12, 24, 0.8);
+        color: var(--ink);
+        font: 500 0.95rem/1.45 var(--font-body);
+        padding: 0.9rem 1rem;
+        outline: none;
+      }
+
+      .copy-modal-text:focus {
+        border-color: rgba(91, 168, 232, 0.55);
+        box-shadow: 0 0 0 3px rgba(91, 168, 232, 0.15);
+      }
+
+      .copy-modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.55rem;
+      }
+
+      .copy-modal-actions .update-btn {
+        width: auto;
+        min-width: 7rem;
+      }
+
+      .copy-modal-actions .copy-btn {
+        padding: 0.7rem 1rem;
+        font-size: 0.9rem;
+      }
+
+      .name-list {
+        list-style: none;
+        margin: 0;
+        padding: 0.5rem 0.5rem 0.85rem;
+        overflow: auto;
+        max-height: calc(100vh - 220px);
+      }
+
+      .name-list li {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.55rem 0.7rem;
+        border-radius: 10px;
+        font-size: 0.98rem;
+        font-weight: 500;
+        animation: name-in 0.35s ease both;
+      }
+
+      @keyframes name-in {
+        from {
+          opacity: 0;
+          transform: translateX(-6px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      .board-checked .name-list li:nth-child(odd) {
+        background: var(--checked-soft);
+      }
+
+      .board-accepted .name-list li:nth-child(odd) {
+        background: var(--accepted-soft);
+      }
+
+      .name-list li::before {
+        content: "";
+        width: 0.45rem;
+        height: 0.45rem;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .board-checked .name-list li::before {
+        background: var(--checked);
+      }
+
+      .board-accepted .name-list li::before {
+        background: var(--accepted);
+      }
+
+      .name-list .empty {
+        color: var(--ink-muted);
+        font-style: italic;
+        justify-content: center;
+        padding: 2rem 1rem;
+      }
+
+      .name-list .empty::before {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="atmosphere" aria-hidden="true"></div>
+
+    <p class="thanks thanks-copy">
+      Powered by
+      <a href="https://cmpf-tools.de/" target="_blank" rel="noopener noreferrer"
+        >Tofi's Campfire Tools API</a
+      >
+      — thank you for making this possible. If this helps you out, say thanks to
+      the developer on
+      <a href="https://discord.gg/jcpucU4Cs" target="_blank" rel="noopener noreferrer"
+        >Discord</a
+      >.
+    </p>
+
+    <header class="top">
+      <div class="brand-block">
+        <h1 class="brand">PoGo Event Scan</h1>
+        <p id="event-name">Press Update to load</p>
+        <p id="event-meta" class="meta"></p>
+      </div>
+      <div class="status-block">
+        <p id="poll-status" class="poll-status">Press Update to load</p>
+        <div class="controls">
+          <label class="search">
+            <span class="sr-only">Campfire event link</span>
+            <input
+              id="campfire-link"
+              type="url"
+              placeholder="https://cmpf.re/…"
+              value="https://cmpf.re/KnRPxW"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </label>
+          <button id="update-btn" type="button" class="update-btn">Update</button>
+          <label class="search">
+            <span class="sr-only">Filter names</span>
+            <input
+              id="filter"
+              type="search"
+              placeholder="Filter names"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </label>
+        </div>
+      </div>
+    </header>
+
+    <main class="boards">
+      <section class="board board-checked" aria-labelledby="checked-heading">
+        <header class="board-head">
+          <div class="board-head-main">
+            <h2 id="checked-heading">Checked in</h2>
+            <p class="count"><span id="checked-count">0</span></p>
+          </div>
+          <button
+            id="copy-checked"
+            type="button"
+            class="copy-btn"
+            disabled
+          >
+            Copy all
+          </button>
+        </header>
+        <ul id="checked-list" class="name-list"></ul>
+      </section>
+
+      <section class="board board-accepted" aria-labelledby="accepted-heading">
+        <header class="board-head">
+          <div class="board-head-main">
+            <h2 id="accepted-heading">Accepted</h2>
+            <p class="count"><span id="accepted-count">0</span></p>
+          </div>
+          <button
+            id="copy-accepted"
+            type="button"
+            class="copy-btn"
+            disabled
+          >
+            Copy all
+          </button>
+        </header>
+        <ul id="accepted-list" class="name-list"></ul>
+      </section>
+    </main>
+
+    <div
+      id="copy-modal"
+      class="copy-modal"
+      hidden
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="copy-modal-title"
+    >
+      <div class="copy-modal-panel">
+        <div class="copy-modal-head">
+          <h2 id="copy-modal-title">Copy names</h2>
+          <button id="copy-modal-close" type="button" class="copy-modal-close">
+            Close
+          </button>
+        </div>
+        <textarea
+          id="copy-modal-text"
+          class="copy-modal-text"
+          readonly
+          spellcheck="false"
+        ></textarea>
+        <div class="copy-modal-actions">
+          <button id="copy-modal-copy" type="button" class="update-btn">
+            Copy
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const DEFAULT_LINK = "https://cmpf.re/KnRPxW";
+      const STORAGE_KEY = "pogo-event-scan-campfire-link";
+
+      const els = {
+        eventName: document.getElementById("event-name"),
+        eventMeta: document.getElementById("event-meta"),
+        pollStatus: document.getElementById("poll-status"),
+        campfireLink: document.getElementById("campfire-link"),
+        updateBtn: document.getElementById("update-btn"),
+        filter: document.getElementById("filter"),
+        checkedCount: document.getElementById("checked-count"),
+        acceptedCount: document.getElementById("accepted-count"),
+        checkedList: document.getElementById("checked-list"),
+        acceptedList: document.getElementById("accepted-list"),
+        copyChecked: document.getElementById("copy-checked"),
+        copyAccepted: document.getElementById("copy-accepted"),
+        copyModal: document.getElementById("copy-modal"),
+        copyModalTitle: document.getElementById("copy-modal-title"),
+        copyModalText: document.getElementById("copy-modal-text"),
+        copyModalClose: document.getElementById("copy-modal-close"),
+        copyModalCopy: document.getElementById("copy-modal-copy"),
+      };
+
+      const savedLink = localStorage.getItem(STORAGE_KEY);
+      if (savedLink) els.campfireLink.value = savedLink;
+
+      let members = { checked: [], accepted: [] };
+      let filterText = "";
+
+      function buildFetchUrl(campfireLink) {
+        const eventsApi =
+          "https://cmpf-tools.de/api/events?events=" +
+          encodeURIComponent(campfireLink);
+        // Upstream API has no CORS headers; corsproxy.io allows github.io + localhost.
+        return "https://corsproxy.io/?" + encodeURIComponent(eventsApi);
+      }
+
+      function setStatus(text, state = "") {
+        els.pollStatus.textContent = text;
+        els.pollStatus.dataset.state = state;
+      }
+
+      function formatTime(date) {
+        return date.toLocaleTimeString(undefined, {
+          hour: "numeric",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+      }
+
+      function renderList(ul, names, emptyLabel) {
+        const query = filterText.trim().toLowerCase();
+        const visible = query
+          ? names.filter((name) => name.toLowerCase().includes(query))
+          : names;
+
+        ul.replaceChildren();
+
+        if (visible.length === 0) {
+          const li = document.createElement("li");
+          li.className = "empty";
+          li.textContent = names.length === 0 ? emptyLabel : "No matches";
+          ul.append(li);
+          return visible.length;
+        }
+
+        const fragment = document.createDocumentFragment();
+        for (const name of visible) {
+          const li = document.createElement("li");
+          li.textContent = name;
+          fragment.append(li);
+        }
+        ul.append(fragment);
+        return visible.length;
+      }
+
+      function render() {
+        const checkedVisible = renderList(
+          els.checkedList,
+          members.checked,
+          "Nobody checked in yet"
+        );
+        const acceptedVisible = renderList(
+          els.acceptedList,
+          members.accepted,
+          "Nobody accepted yet"
+        );
+
+        const filtering = filterText.trim().length > 0;
+        els.checkedCount.textContent = filtering
+          ? `${checkedVisible}/${members.checked.length}`
+          : String(members.checked.length);
+        els.acceptedCount.textContent = filtering
+          ? `${acceptedVisible}/${members.accepted.length}`
+          : String(members.accepted.length);
+
+        els.copyChecked.disabled = members.checked.length === 0;
+        els.copyAccepted.disabled = members.accepted.length === 0;
+      }
+
+      function closeCopyModal() {
+        els.copyModal.hidden = true;
+      }
+
+      function openCopyModal(names, label) {
+        els.copyModalTitle.textContent = `${label} (${names.length})`;
+        els.copyModalText.value = names.join("\n");
+        els.copyModal.hidden = false;
+        els.copyModalText.focus();
+        els.copyModalText.select();
+      }
+
+      function promptCopy(names, label) {
+        if (names.length === 0) return;
+        openCopyModal(names, label);
+      }
+
+      async function copyModalText() {
+        const text = els.copyModalText.value;
+        els.copyModalText.focus();
+        els.copyModalText.select();
+
+        try {
+          if (navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(text);
+          } else {
+            document.execCommand("copy");
+          }
+          els.copyModalCopy.textContent = "Copied";
+          setTimeout(() => {
+            els.copyModalCopy.textContent = "Copy";
+          }, 1200);
+        } catch {
+          // Text stays selected so the user can Ctrl/Cmd+C.
+        }
+      }
+
+      function splitMembers(event) {
+        const checked = [];
+        const accepted = [];
+
+        for (const member of event.members || []) {
+          const name = member.display_name?.trim();
+          if (!name) continue;
+
+          if (member.rsvp_status === "CHECKED_IN") checked.push(name);
+          else if (member.rsvp_status === "ACCEPTED") accepted.push(name);
+        }
+
+        return { checked, accepted };
+      }
+
+      function updateEventMeta(event) {
+        els.eventName.textContent = event.name || "Untitled event";
+
+        const parts = [];
+        if (event.address) parts.push(event.address);
+
+        if (event.time) {
+          const start = new Date(event.time);
+          if (!Number.isNaN(start.getTime())) {
+            parts.push(
+              start.toLocaleString(undefined, {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
+                hour: "numeric",
+                minute: "2-digit",
+              })
+            );
+          }
+        }
+
+        els.eventMeta.textContent = parts.join(" · ");
+      }
+
+      async function update() {
+        const campfireLink = els.campfireLink.value.trim() || DEFAULT_LINK;
+        els.campfireLink.value = campfireLink;
+        localStorage.setItem(STORAGE_KEY, campfireLink);
+
+        els.updateBtn.disabled = true;
+        setStatus("Updating…");
+
+        try {
+          const res = await fetch(buildFetchUrl(campfireLink), {
+            cache: "no-store",
+          });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+          const data = await res.json();
+          const event = Array.isArray(data) ? data[0] : data;
+          if (!event) throw new Error("No event in response");
+
+          updateEventMeta(event);
+          members = splitMembers(event);
+          render();
+          setStatus(`Updated ${formatTime(new Date())}`, "ok");
+        } catch (err) {
+          setStatus(`Update failed: ${err.message}`, "error");
+        } finally {
+          els.updateBtn.disabled = false;
+        }
+      }
+
+      els.filter.addEventListener("input", () => {
+        filterText = els.filter.value;
+        render();
+      });
+
+      els.campfireLink.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          update();
+        }
+      });
+
+      els.copyChecked.addEventListener("click", () => {
+        promptCopy(members.checked, "Checked in");
+      });
+
+      els.copyAccepted.addEventListener("click", () => {
+        promptCopy(members.accepted, "Accepted");
+      });
+
+      els.copyModalClose.addEventListener("click", closeCopyModal);
+      els.copyModalCopy.addEventListener("click", copyModalText);
+
+      els.copyModal.addEventListener("click", (event) => {
+        if (event.target === els.copyModal) closeCopyModal();
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !els.copyModal.hidden) {
+          closeCopyModal();
+        }
+      });
+
+      els.updateBtn.addEventListener("click", update);
+    </script>
+  </body>
+</html>
