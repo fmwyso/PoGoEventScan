@@ -19,9 +19,11 @@
         --checked-soft: rgba(91, 168, 232, 0.14);
         --accepted: #e86b6b;
         --accepted-soft: rgba(232, 107, 107, 0.14);
+        --mark-checked: #3ecf8e;
+        --mark-accepted: #e6c35c;
+        --mark-none: #e86b6b;
         --line: rgba(238, 243, 251, 0.12);
         --panel: rgba(12, 20, 36, 0.78);
-        --accent: #5ba8e8;
         --font-display: "Outfit", sans-serif;
         --font-body: "IBM Plex Sans", sans-serif;
       }
@@ -78,6 +80,10 @@
         border: 0;
       }
 
+      .hidden {
+        display: none !important;
+      }
+
       .thanks {
         max-width: 1400px;
         margin: 0 auto;
@@ -107,21 +113,20 @@
 
       .top {
         display: grid;
-        gap: 1.25rem;
+        gap: 1.1rem;
         padding: 1.25rem clamp(1rem, 3vw, 2.5rem) 1rem;
         max-width: 1400px;
         margin: 0 auto;
+        justify-items: center;
+        text-align: center;
       }
 
-      @media (min-width: 800px) {
-        .top {
-          grid-template-columns: 1fr auto;
-          align-items: end;
-        }
+      .brand-block {
+        width: 100%;
       }
 
       .brand {
-        margin: 0 0 0.35rem;
+        margin: 0;
         font-family: var(--font-display);
         font-weight: 800;
         font-size: clamp(1.75rem, 4vw, 2.6rem);
@@ -142,31 +147,16 @@
         }
       }
 
-      #event-name {
-        margin: 0;
-        font-family: var(--font-display);
-        font-weight: 600;
-        font-size: clamp(1.05rem, 2.2vw, 1.35rem);
-        letter-spacing: -0.01em;
-        color: var(--ink-muted);
-      }
-
-      .meta {
-        margin: 0.45rem 0 0;
-        color: var(--ink-muted);
-        font-size: 0.92rem;
-      }
-
       .status-block {
         display: grid;
         gap: 0.65rem;
         justify-items: stretch;
-        min-width: min(100%, 280px);
+        width: min(100%, 420px);
       }
 
       .poll-status {
         margin: 0;
-        text-align: right;
+        text-align: center;
         font-size: 0.82rem;
         color: var(--ink-muted);
       }
@@ -182,6 +172,13 @@
       .controls {
         display: grid;
         gap: 0.55rem;
+      }
+
+      .hint {
+        margin: 0;
+        font-size: 0.78rem;
+        color: var(--ink-muted);
+        line-height: 1.35;
       }
 
       .update-btn {
@@ -211,7 +208,8 @@
         cursor: wait;
       }
 
-      .search input {
+      .search input,
+      .search textarea {
         width: 100%;
         border: 1px solid var(--line);
         border-radius: 10px;
@@ -224,11 +222,19 @@
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
       }
 
-      .search input::placeholder {
+      .search textarea {
+        min-height: 5.2rem;
+        resize: vertical;
+        line-height: 1.4;
+      }
+
+      .search input::placeholder,
+      .search textarea::placeholder {
         color: rgba(154, 173, 196, 0.7);
       }
 
-      .search input:focus {
+      .search input:focus,
+      .search textarea:focus {
         border-color: rgba(91, 168, 232, 0.55);
         box-shadow: 0 0 0 3px rgba(91, 168, 232, 0.15);
       }
@@ -440,6 +446,79 @@
         box-shadow: 0 0 0 3px rgba(91, 168, 232, 0.15);
       }
 
+      .copy-modal-option {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0;
+        color: var(--ink-muted);
+        font-size: 0.9rem;
+        line-height: 1.35;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .copy-modal-option[hidden] {
+        display: none;
+      }
+
+      .copy-modal-option input {
+        position: absolute;
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+        margin: 0;
+        pointer-events: none;
+      }
+
+      .toggle-track {
+        position: relative;
+        flex-shrink: 0;
+        width: 2.75rem;
+        height: 1.55rem;
+        border-radius: 999px;
+        background: rgba(238, 243, 251, 0.14);
+        border: 1px solid rgba(238, 243, 251, 0.18);
+        transition: background 0.2s ease, border-color 0.2s ease;
+      }
+
+      .toggle-thumb {
+        position: absolute;
+        top: 50%;
+        left: 0.15rem;
+        width: 1.2rem;
+        height: 1.2rem;
+        border-radius: 50%;
+        background: #eef3fb;
+        transform: translateY(-50%);
+        transition: transform 0.2s ease, background 0.2s ease;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+      }
+
+      .copy-modal-option input:checked + .toggle-track {
+        background: rgba(91, 168, 232, 0.45);
+        border-color: rgba(91, 168, 232, 0.7);
+      }
+
+      .copy-modal-option input:checked + .toggle-track .toggle-thumb {
+        transform: translate(1.2rem, -50%);
+        background: #8ec5f5;
+      }
+
+      .copy-modal-option input:focus-visible + .toggle-track {
+        box-shadow: 0 0 0 3px rgba(91, 168, 232, 0.25);
+      }
+
+      .copy-modal-option-text {
+        display: grid;
+        gap: 0.15rem;
+      }
+
+      .copy-modal-option-text strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
       .copy-modal-actions {
         display: flex;
         justify-content: flex-end;
@@ -451,9 +530,97 @@
         min-width: 7rem;
       }
 
-      .copy-modal-actions .copy-btn {
-        padding: 0.7rem 1rem;
-        font-size: 0.9rem;
+      .raffle-modal-panel {
+        width: min(480px, 100%);
+        max-height: min(80vh, 640px);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1.15rem 1.2rem 1.2rem;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: #121c30;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+        animation: modal-in 0.2s ease both;
+      }
+
+      .raffle-stage {
+        display: grid;
+        place-items: center;
+        min-height: 9.5rem;
+        padding: 1.25rem 1rem;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background:
+          radial-gradient(ellipse 70% 80% at 50% 30%, rgba(91, 168, 232, 0.12), transparent 70%),
+          rgba(6, 12, 24, 0.8);
+        overflow: hidden;
+      }
+
+      .raffle-roll {
+        margin: 0;
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: clamp(1.35rem, 4vw, 1.85rem);
+        letter-spacing: -0.03em;
+        text-align: center;
+        color: var(--ink-muted);
+        min-height: 1.3em;
+        transition: color 0.2s ease, transform 0.25s ease, opacity 0.25s ease;
+      }
+
+      .raffle-roll.is-rolling {
+        color: var(--ink);
+        animation: raffle-flicker 0.08s ease-in-out infinite alternate;
+      }
+
+      .raffle-roll.is-winner {
+        color: #8ec5f5;
+        transform: scale(1.08);
+        animation: raffle-reveal 0.55s ease both;
+      }
+
+      .raffle-sub {
+        margin: 0.55rem 0 0;
+        font-size: 0.85rem;
+        color: var(--ink-muted);
+        text-align: center;
+        min-height: 1.2em;
+      }
+
+      .raffle-sub.is-winner {
+        color: var(--mark-checked);
+        animation: brand-in 0.45s ease 0.15s both;
+      }
+
+      @keyframes raffle-flicker {
+        from {
+          opacity: 0.55;
+          transform: translateY(2px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(-2px);
+        }
+      }
+
+      @keyframes raffle-reveal {
+        from {
+          opacity: 0;
+          transform: scale(0.86) translateY(8px);
+          filter: blur(4px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1.08) translateY(0);
+          filter: blur(0);
+        }
+      }
+
+      .raffle-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.55rem;
       }
 
       .name-list {
@@ -520,6 +687,164 @@
       .name-list .empty::before {
         display: none;
       }
+
+      .matrix-wrap {
+        padding: 0.5rem clamp(1rem, 3vw, 2.5rem) 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        display: grid;
+        gap: 0.4rem;
+        animation: board-rise 0.65s ease both;
+      }
+
+      .matrix-toolbar {
+        display: grid;
+        gap: 0.55rem;
+      }
+
+      .matrix-action-btns {
+        display: grid;
+        gap: 0.55rem;
+      }
+
+      @media (min-width: 560px) {
+        .matrix-action-btns {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (min-width: 900px) {
+        .matrix-action-btns {
+          grid-template-columns: auto auto;
+          justify-content: end;
+        }
+
+        .matrix-action-btns .update-btn {
+          width: auto;
+          min-width: 9.5rem;
+        }
+      }
+
+      .matrix-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.85rem 1.1rem;
+        margin: 0;
+        padding: 0 0.15rem;
+        font-size: 0.82rem;
+        color: var(--ink-muted);
+      }
+
+      .matrix-panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        backdrop-filter: blur(10px);
+        overflow: hidden;
+      }
+
+      .matrix-legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+
+      .mark {
+        font-weight: 800;
+        font-size: 1.05rem;
+        line-height: 1;
+      }
+
+      .mark-checked {
+        color: var(--mark-checked);
+      }
+
+      .mark-accepted {
+        color: var(--mark-accepted);
+      }
+
+      .mark-none {
+        color: var(--mark-none);
+      }
+
+      .matrix-scroll {
+        overflow: auto;
+        max-height: calc(100vh - 280px);
+      }
+
+      .matrix-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.92rem;
+      }
+
+      .matrix-table th,
+      .matrix-table td {
+        padding: 0.55rem 0.75rem;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap;
+      }
+
+      .matrix-table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: #152238;
+        font-family: var(--font-display);
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        text-align: center;
+        line-height: 1.25;
+      }
+
+      .matrix-table thead th .col-date,
+      .matrix-table thead th .col-count {
+        display: block;
+      }
+
+      .matrix-table thead th .col-count {
+        margin-top: 0.15rem;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--mark-checked);
+      }
+
+      .matrix-table thead th:first-child,
+      .matrix-table td.name-cell {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        text-align: left;
+        background: #121c30;
+        min-width: 9rem;
+      }
+
+      .matrix-table thead th:first-child {
+        z-index: 3;
+        background: #152238;
+      }
+
+      .matrix-table tbody tr:nth-child(even) td {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .matrix-table tbody tr:nth-child(even) td.name-cell {
+        background: #141f34;
+      }
+
+      .matrix-table td.status-cell {
+        text-align: center;
+        font-size: 1.15rem;
+        font-weight: 800;
+      }
+
+      .matrix-empty {
+        margin: 0;
+        padding: 2rem 1rem;
+        text-align: center;
+        color: var(--ink-muted);
+        font-style: italic;
+      }
     </style>
   </head>
   <body>
@@ -540,30 +865,30 @@
     <header class="top">
       <div class="brand-block">
         <h1 class="brand">PoGo Event Scan</h1>
-        <p id="event-name">Press Update to load</p>
-        <p id="event-meta" class="meta"></p>
       </div>
       <div class="status-block">
         <p id="poll-status" class="poll-status">Press Update to load</p>
         <div class="controls">
           <label class="search">
-            <span class="sr-only">Campfire event link</span>
-            <input
+            <span class="sr-only">Campfire event links or meeting IDs</span>
+            <textarea
               id="campfire-link"
-              type="url"
-              placeholder="https://cmpf.re/…"
-              value="https://cmpf.re/KnRPxW"
+              placeholder="One Campfire link or meeting ID per line&#10;https://cmpf.re/…&#10;or event UUID"
               autocomplete="off"
               spellcheck="false"
-            />
+            >https://cmpf.re/KnRPxW</textarea>
           </label>
+          <p class="hint">
+            Paste one or more Campfire links or meeting IDs (one per line), then
+            press Update.
+          </p>
           <button id="update-btn" type="button" class="update-btn">Update</button>
           <label class="search">
             <span class="sr-only">Filter names</span>
             <input
               id="filter"
               type="search"
-              placeholder="Filter names"
+              placeholder="Filter names (not case-sensitive)"
               autocomplete="off"
               spellcheck="false"
             />
@@ -572,7 +897,7 @@
       </div>
     </header>
 
-    <main class="boards">
+    <main id="boards" class="boards hidden" hidden>
       <section class="board board-checked" aria-labelledby="checked-heading">
         <header class="board-head">
           <div class="board-head-main">
@@ -610,6 +935,30 @@
       </section>
     </main>
 
+    <section id="matrix-wrap" class="matrix-wrap" aria-label="Event status table">
+      <div class="matrix-toolbar">
+        <div class="matrix-action-btns">
+          <button id="copy-multi-checkins" type="button" class="update-btn">
+            Copy all check-ins
+          </button>
+          <button id="raffle-btn" type="button" class="update-btn" disabled>
+            Raffle
+          </button>
+        </div>
+        <p class="matrix-legend">
+          <span><span class="mark mark-checked" aria-hidden="true">✓</span> Checked in</span>
+          <span><span class="mark mark-accepted" aria-hidden="true">~</span> Accepted</span>
+          <span><span class="mark mark-none" aria-hidden="true">✕</span> Neither</span>
+        </p>
+      </div>
+      <div class="matrix-panel">
+        <div class="matrix-scroll">
+          <table id="matrix-table" class="matrix-table"></table>
+          <p id="matrix-empty" class="matrix-empty hidden">No matching names</p>
+        </div>
+      </div>
+    </section>
+
     <div
       id="copy-modal"
       class="copy-modal"
@@ -631,6 +980,16 @@
           readonly
           spellcheck="false"
         ></textarea>
+        <label id="copy-modal-all-events" class="copy-modal-option" hidden>
+          <input id="copy-all-events-toggle" type="checkbox" />
+          <span class="toggle-track" aria-hidden="true">
+            <span class="toggle-thumb"></span>
+          </span>
+          <span class="copy-modal-option-text">
+            <strong>Checked into all</strong>
+            <span>Off = any event (≥1) · On = every event</span>
+          </span>
+        </label>
         <div class="copy-modal-actions">
           <button id="copy-modal-copy" type="button" class="update-btn">
             Copy
@@ -639,40 +998,123 @@
       </div>
     </div>
 
+    <div
+      id="raffle-modal"
+      class="copy-modal"
+      hidden
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="raffle-modal-title"
+    >
+      <div class="raffle-modal-panel">
+        <div class="copy-modal-head">
+          <h2 id="raffle-modal-title">Raffle</h2>
+          <button id="raffle-modal-close" type="button" class="copy-modal-close">
+            Close
+          </button>
+        </div>
+        <label class="copy-modal-option">
+          <input id="raffle-weighted-toggle" type="checkbox" checked />
+          <span class="toggle-track" aria-hidden="true">
+            <span class="toggle-thumb"></span>
+          </span>
+          <span class="copy-modal-option-text">
+            <strong>Weighted by check-ins</strong>
+            <span>Off = 1 entry each · On = more check-ins = more chances</span>
+          </span>
+        </label>
+        <div class="raffle-stage" aria-live="polite">
+          <p id="raffle-roll" class="raffle-roll">Ready when you are</p>
+          <p id="raffle-sub" class="raffle-sub"></p>
+        </div>
+        <div class="raffle-actions">
+          <button id="raffle-draw-btn" type="button" class="update-btn">
+            Draw
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script>
       const DEFAULT_LINK = "https://cmpf.re/KnRPxW";
-      const STORAGE_KEY = "pogo-event-scan-campfire-link";
+      const STORAGE_KEY = "pogo-event-scan-campfire-links";
+
+      const STATUS = {
+        CHECKED_IN: "CHECKED_IN",
+        ACCEPTED: "ACCEPTED",
+        NONE: "NONE",
+      };
+
+      const MARK = {
+        CHECKED_IN: { symbol: "✓", className: "mark-checked", label: "Checked in" },
+        ACCEPTED: { symbol: "~", className: "mark-accepted", label: "Accepted" },
+        NONE: { symbol: "✕", className: "mark-none", label: "Neither" },
+      };
 
       const els = {
-        eventName: document.getElementById("event-name"),
-        eventMeta: document.getElementById("event-meta"),
         pollStatus: document.getElementById("poll-status"),
         campfireLink: document.getElementById("campfire-link"),
         updateBtn: document.getElementById("update-btn"),
         filter: document.getElementById("filter"),
+        boards: document.getElementById("boards"),
         checkedCount: document.getElementById("checked-count"),
         acceptedCount: document.getElementById("accepted-count"),
         checkedList: document.getElementById("checked-list"),
         acceptedList: document.getElementById("accepted-list"),
         copyChecked: document.getElementById("copy-checked"),
         copyAccepted: document.getElementById("copy-accepted"),
+        copyMultiCheckins: document.getElementById("copy-multi-checkins"),
+        matrixWrap: document.getElementById("matrix-wrap"),
+        matrixTable: document.getElementById("matrix-table"),
+        matrixEmpty: document.getElementById("matrix-empty"),
         copyModal: document.getElementById("copy-modal"),
         copyModalTitle: document.getElementById("copy-modal-title"),
         copyModalText: document.getElementById("copy-modal-text"),
         copyModalClose: document.getElementById("copy-modal-close"),
         copyModalCopy: document.getElementById("copy-modal-copy"),
+        copyModalAllEvents: document.getElementById("copy-modal-all-events"),
+        copyAllEventsToggle: document.getElementById("copy-all-events-toggle"),
+        raffleBtn: document.getElementById("raffle-btn"),
+        raffleModal: document.getElementById("raffle-modal"),
+        raffleModalClose: document.getElementById("raffle-modal-close"),
+        raffleWeightedToggle: document.getElementById("raffle-weighted-toggle"),
+        raffleRoll: document.getElementById("raffle-roll"),
+        raffleSub: document.getElementById("raffle-sub"),
+        raffleDrawBtn: document.getElementById("raffle-draw-btn"),
       };
 
-      const savedLink = localStorage.getItem(STORAGE_KEY);
-      if (savedLink) els.campfireLink.value = savedLink;
+      const savedLinks = localStorage.getItem(STORAGE_KEY);
+      if (savedLinks) els.campfireLink.value = savedLinks;
 
+      /** @type {{ checked: string[], accepted: string[] }} */
       let members = { checked: [], accepted: [] };
+      /** @type {{ columns: { id: string, label: string, title: string, checkinTotal: number }[], rows: { key: string, name: string, statuses: string[], checkedCount: number }[] } | null} */
+      let matrix = null;
       let filterText = "";
+      let copyModalMode = "plain"; // "plain" | "checkins"
+      let raffleTimer = null;
+      let raffleRunning = false;
 
-      function buildFetchUrl(campfireLink) {
+      function matchesNameFilter(name, query) {
+        if (!query) return true;
+        return name.toLocaleLowerCase().includes(query);
+      }
+
+      function parseLinks(raw) {
+        return [
+          ...new Set(
+            raw
+              .split(/[\n,]+/)
+              .map((part) => part.trim())
+              .filter(Boolean)
+          ),
+        ];
+      }
+
+      function buildFetchUrl(links) {
         const eventsApi =
           "https://cmpf-tools.de/api/events?events=" +
-          encodeURIComponent(campfireLink);
+          encodeURIComponent(links.join(","));
         // Upstream API has no CORS headers; corsproxy.io allows github.io + localhost.
         return "https://corsproxy.io/?" + encodeURIComponent(eventsApi);
       }
@@ -690,10 +1132,111 @@
         });
       }
 
+      function formatDay(iso) {
+        const date = new Date(iso);
+        if (Number.isNaN(date.getTime())) return "Unknown date";
+        return date.toLocaleDateString(undefined, {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+        });
+      }
+
+      function normalizeStatus(rsvp) {
+        if (rsvp === STATUS.CHECKED_IN) return STATUS.CHECKED_IN;
+        if (rsvp === STATUS.ACCEPTED) return STATUS.ACCEPTED;
+        return STATUS.NONE;
+      }
+
+      function memberKey(member) {
+        return member.id || member.username || member.display_name?.trim() || "";
+      }
+
+      function splitMembers(event) {
+        const checked = [];
+        const accepted = [];
+
+        for (const member of event.members || []) {
+          const name = member.display_name?.trim();
+          if (!name) continue;
+
+          if (member.rsvp_status === STATUS.CHECKED_IN) checked.push(name);
+          else if (member.rsvp_status === STATUS.ACCEPTED) accepted.push(name);
+        }
+
+        return { checked, accepted };
+      }
+
+      function buildMatrix(events) {
+        const sorted = [...events].sort((a, b) => {
+          const aTime = new Date(a.time || 0).getTime();
+          const bTime = new Date(b.time || 0).getTime();
+          return aTime - bTime;
+        });
+
+        const columns = sorted.map((event, index) => {
+          const checkinTotal = (event.members || []).filter(
+            (member) => member.rsvp_status === STATUS.CHECKED_IN
+          ).length;
+          return {
+            id: event.id || String(index),
+            label: event.time
+              ? formatDay(event.time)
+              : event.name || `Event ${index + 1}`,
+            title: event.name || "Untitled event",
+            checkinTotal,
+          };
+        });
+
+        /** @type {Map<string, { name: string, statuses: string[] }>} */
+        const people = new Map();
+
+        sorted.forEach((event, eventIndex) => {
+          for (const member of event.members || []) {
+            const name = member.display_name?.trim();
+            const key = memberKey(member);
+            if (!name || !key) continue;
+
+            let person = people.get(key);
+            if (!person) {
+              person = {
+                name,
+                statuses: Array(sorted.length).fill(STATUS.NONE),
+              };
+              people.set(key, person);
+            } else if (name) {
+              person.name = name;
+            }
+
+            person.statuses[eventIndex] = normalizeStatus(member.rsvp_status);
+          }
+        });
+
+        const rows = [...people.entries()]
+          .map(([key, person]) => {
+            const checkedCount = person.statuses.filter(
+              (status) => status === STATUS.CHECKED_IN
+            ).length;
+            return {
+              key,
+              name: person.name,
+              statuses: person.statuses,
+              checkedCount,
+            };
+          })
+          .sort(
+            (a, b) =>
+              b.checkedCount - a.checkedCount ||
+              a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
+          );
+
+        return { columns, rows };
+      }
+
       function renderList(ul, names, emptyLabel) {
-        const query = filterText.trim().toLowerCase();
+        const query = filterText.trim().toLocaleLowerCase();
         const visible = query
-          ? names.filter((name) => name.toLowerCase().includes(query))
+          ? names.filter((name) => matchesNameFilter(name, query))
           : names;
 
         ul.replaceChildren();
@@ -716,7 +1259,10 @@
         return visible.length;
       }
 
-      function render() {
+      function renderLists() {
+        els.boards.classList.remove("hidden");
+        els.matrixWrap.classList.add("hidden");
+
         const checkedVisible = renderList(
           els.checkedList,
           members.checked,
@@ -740,11 +1286,285 @@
         els.copyAccepted.disabled = members.accepted.length === 0;
       }
 
+      function namesWithCheckins(requireAllEvents) {
+        if (!matrix?.rows?.length) return [];
+        const eventCount = matrix.columns.length;
+        return matrix.rows
+          .filter((row) => {
+            const count =
+              typeof row.checkedCount === "number"
+                ? row.checkedCount
+                : (row.statuses || []).filter(
+                    (status) => status === STATUS.CHECKED_IN
+                  ).length;
+            if (requireAllEvents) return eventCount > 0 && count === eventCount;
+            return count >= 1;
+          })
+          .map((row) => row.name);
+      }
+
+      function syncCopyCheckinsButton() {
+        if (!els.copyMultiCheckins) return;
+        els.copyMultiCheckins.disabled = !matrix || matrix.rows.length === 0;
+      }
+
+      function syncRaffleButton() {
+        if (!els.raffleBtn) return;
+        els.raffleBtn.disabled = rafflePool().length === 0;
+      }
+
+      function rafflePool() {
+        if (!matrix?.rows?.length) return [];
+        return matrix.rows
+          .filter((row) => {
+            const count =
+              typeof row.checkedCount === "number"
+                ? row.checkedCount
+                : (row.statuses || []).filter(
+                    (status) => status === STATUS.CHECKED_IN
+                  ).length;
+            return count >= 1;
+          })
+          .map((row) => ({
+            name: row.name,
+            weight: Math.max(
+              1,
+              typeof row.checkedCount === "number" ? row.checkedCount : 1
+            ),
+          }));
+      }
+
+      function pickWeighted(pool, weighted) {
+        if (pool.length === 0) return null;
+        if (!weighted) {
+          const entry = pool[Math.floor(Math.random() * pool.length)];
+          return entry;
+        }
+
+        const total = pool.reduce((sum, entry) => sum + entry.weight, 0);
+        let ticket = Math.random() * total;
+        for (const entry of pool) {
+          ticket -= entry.weight;
+          if (ticket <= 0) return entry;
+        }
+        return pool[pool.length - 1];
+      }
+
+      function stopRaffleAnimation() {
+        if (raffleTimer) {
+          clearTimeout(raffleTimer);
+          raffleTimer = null;
+        }
+        raffleRunning = false;
+        if (els.raffleDrawBtn) els.raffleDrawBtn.disabled = false;
+      }
+
+      function openRaffleModal() {
+        stopRaffleAnimation();
+        els.raffleModal.hidden = false;
+        els.raffleRoll.className = "raffle-roll";
+        els.raffleRoll.textContent = "Ready when you are";
+        els.raffleSub.className = "raffle-sub";
+        els.raffleSub.textContent = `${rafflePool().length} eligible check-ins`;
+      }
+
+      function closeRaffleModal() {
+        stopRaffleAnimation();
+        els.raffleModal.hidden = true;
+      }
+
+      function runRaffle() {
+        const pool = rafflePool();
+        if (pool.length === 0 || raffleRunning) return;
+
+        const weighted = Boolean(els.raffleWeightedToggle?.checked);
+        const winnerEntry = pickWeighted(pool, weighted);
+        if (!winnerEntry) return;
+        const winner = winnerEntry.name;
+        const checkins = winnerEntry.weight;
+
+        raffleRunning = true;
+        els.raffleDrawBtn.disabled = true;
+        els.raffleRoll.className = "raffle-roll is-rolling";
+        els.raffleSub.className = "raffle-sub";
+        els.raffleSub.textContent = weighted
+          ? "Weighted roll in progress…"
+          : "Flat roll in progress…";
+
+        const names = pool.map((entry) => entry.name);
+        let ticks = 0;
+        // Many quick flashes (~50–65), easing out over about 1.5 seconds.
+        const totalTicks = 50 + Math.floor(Math.random() * 16);
+        let lastPreview = "";
+
+        const tick = () => {
+          ticks += 1;
+
+          let preview = winner;
+          if (ticks < totalTicks) {
+            // Avoid repeating the same flash twice in a row when possible.
+            do {
+              preview = names[Math.floor(Math.random() * names.length)];
+            } while (names.length > 1 && preview === lastPreview);
+            lastPreview = preview;
+          }
+
+          els.raffleRoll.textContent = preview;
+
+          if (ticks >= totalTicks) {
+            els.raffleRoll.className = "raffle-roll is-winner";
+            els.raffleRoll.textContent = winner;
+            els.raffleSub.className = "raffle-sub is-winner";
+            const mode = weighted
+              ? "weighted by check-ins"
+              : "one entry each";
+            els.raffleSub.textContent = `Winner · ${checkins} check-in${checkins === 1 ? "" : "s"} · ${mode}`;
+            stopRaffleAnimation();
+            return;
+          }
+
+          const progress = ticks / totalTicks;
+          // Fast early on, then ease into a slower finish (~1.5s total).
+          const delay = Math.round(7 + Math.pow(progress, 2.4) * 50);
+          raffleTimer = setTimeout(tick, delay);
+        };
+
+        tick();
+      }
+
+      function checkinCopyLabel(requireAllEvents, count) {
+        const mode = requireAllEvents
+          ? "Checked into all"
+          : "Checked into any";
+        return `${mode} (${count})`;
+      }
+
+      function refreshCheckinCopyModal() {
+        const requireAll = Boolean(els.copyAllEventsToggle?.checked);
+        const names = namesWithCheckins(requireAll);
+        els.copyModalTitle.textContent = checkinCopyLabel(
+          requireAll,
+          names.length
+        );
+        els.copyModalText.value = names.join("\n");
+        els.copyModalText.focus();
+        els.copyModalText.select();
+      }
+
+      function openCheckinCopyModal() {
+        copyModalMode = "checkins";
+        if (els.copyModalAllEvents) els.copyModalAllEvents.hidden = false;
+        if (els.copyAllEventsToggle) els.copyAllEventsToggle.checked = false;
+        els.copyModal.hidden = false;
+        refreshCheckinCopyModal();
+      }
+
+      function renderMatrix() {
+        els.boards.classList.add("hidden");
+        els.matrixWrap.classList.remove("hidden");
+        if (els.copyChecked) els.copyChecked.disabled = true;
+        if (els.copyAccepted) els.copyAccepted.disabled = true;
+        syncCopyCheckinsButton();
+        syncRaffleButton();
+
+        const query = filterText.trim().toLocaleLowerCase();
+        const rows = matrix
+          ? query
+            ? matrix.rows.filter((row) => matchesNameFilter(row.name, query))
+            : matrix.rows
+          : [];
+
+        els.matrixTable.replaceChildren();
+
+        if (!matrix || matrix.columns.length === 0) {
+          els.matrixEmpty.classList.remove("hidden");
+          els.matrixEmpty.textContent = "No events loaded";
+          return;
+        }
+
+        if (rows.length === 0) {
+          els.matrixEmpty.classList.remove("hidden");
+          els.matrixEmpty.textContent =
+            matrix.rows.length === 0 ? "No members found" : "No matching names";
+          return;
+        }
+
+        els.matrixEmpty.classList.add("hidden");
+
+        const thead = document.createElement("thead");
+        const headRow = document.createElement("tr");
+        const nameHeader = document.createElement("th");
+        nameHeader.scope = "col";
+        nameHeader.textContent = "Name";
+        headRow.append(nameHeader);
+
+        const countHeader = document.createElement("th");
+        countHeader.scope = "col";
+        countHeader.textContent = "Check-ins";
+        countHeader.title = "Number of events checked in";
+        headRow.append(countHeader);
+
+        for (const column of matrix.columns) {
+          const th = document.createElement("th");
+          th.scope = "col";
+          th.title = `${column.title} — ${column.checkinTotal} check-in${column.checkinTotal === 1 ? "" : "s"}`;
+
+          const dateLine = document.createElement("span");
+          dateLine.className = "col-date";
+          dateLine.textContent = column.label;
+
+          const countLine = document.createElement("span");
+          countLine.className = "col-count";
+          countLine.textContent = `(${column.checkinTotal})`;
+
+          th.append(dateLine, countLine);
+          headRow.append(th);
+        }
+        thead.append(headRow);
+
+        const tbody = document.createElement("tbody");
+        for (const row of rows) {
+          const tr = document.createElement("tr");
+          const nameCell = document.createElement("td");
+          nameCell.className = "name-cell";
+          nameCell.textContent = row.name;
+          tr.append(nameCell);
+
+          const countCell = document.createElement("td");
+          countCell.className = "status-cell";
+          countCell.textContent = String(row.checkedCount);
+          countCell.title = `${row.checkedCount} check-in${row.checkedCount === 1 ? "" : "s"}`;
+          tr.append(countCell);
+
+          row.statuses.forEach((status) => {
+            const mark = MARK[status] || MARK.NONE;
+            const td = document.createElement("td");
+            td.className = `status-cell ${mark.className}`;
+            td.textContent = mark.symbol;
+            td.title = mark.label;
+            td.setAttribute("aria-label", mark.label);
+            tr.append(td);
+          });
+
+          tbody.append(tr);
+        }
+
+        els.matrixTable.append(thead, tbody);
+      }
+
+      function render() {
+        renderMatrix();
+      }
+
       function closeCopyModal() {
         els.copyModal.hidden = true;
+        copyModalMode = "plain";
+        if (els.copyModalAllEvents) els.copyModalAllEvents.hidden = true;
       }
 
       function openCopyModal(names, label) {
+        copyModalMode = "plain";
+        if (els.copyModalAllEvents) els.copyModalAllEvents.hidden = true;
         els.copyModalTitle.textContent = `${label} (${names.length})`;
         els.copyModalText.value = names.join("\n");
         els.copyModal.hidden = false;
@@ -753,8 +1573,10 @@
       }
 
       function promptCopy(names, label) {
-        if (names.length === 0) return;
-        openCopyModal(names, label);
+        openCopyModal(
+          names,
+          names.length === 0 ? `${label} (none)` : label
+        );
       }
 
       async function copyModalText() {
@@ -777,66 +1599,30 @@
         }
       }
 
-      function splitMembers(event) {
-        const checked = [];
-        const accepted = [];
-
-        for (const member of event.members || []) {
-          const name = member.display_name?.trim();
-          if (!name) continue;
-
-          if (member.rsvp_status === "CHECKED_IN") checked.push(name);
-          else if (member.rsvp_status === "ACCEPTED") accepted.push(name);
-        }
-
-        return { checked, accepted };
-      }
-
-      function updateEventMeta(event) {
-        els.eventName.textContent = event.name || "Untitled event";
-
-        const parts = [];
-        if (event.address) parts.push(event.address);
-
-        if (event.time) {
-          const start = new Date(event.time);
-          if (!Number.isNaN(start.getTime())) {
-            parts.push(
-              start.toLocaleString(undefined, {
-                weekday: "short",
-                month: "short",
-                day: "numeric",
-                hour: "numeric",
-                minute: "2-digit",
-              })
-            );
-          }
-        }
-
-        els.eventMeta.textContent = parts.join(" · ");
-      }
-
       async function update() {
-        const campfireLink = els.campfireLink.value.trim() || DEFAULT_LINK;
-        els.campfireLink.value = campfireLink;
-        localStorage.setItem(STORAGE_KEY, campfireLink);
+        const raw = els.campfireLink.value.trim() || DEFAULT_LINK;
+        const links = parseLinks(raw);
+        if (links.length === 0) links.push(DEFAULT_LINK);
+
+        els.campfireLink.value = links.join("\n");
+        localStorage.setItem(STORAGE_KEY, els.campfireLink.value);
 
         els.updateBtn.disabled = true;
         setStatus("Updating…");
 
         try {
-          const res = await fetch(buildFetchUrl(campfireLink), {
-            cache: "no-store",
-          });
+          const res = await fetch(buildFetchUrl(links), { cache: "no-store" });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
           const data = await res.json();
-          const event = Array.isArray(data) ? data[0] : data;
-          if (!event) throw new Error("No event in response");
+          const events = Array.isArray(data) ? data.filter(Boolean) : data ? [data] : [];
+          if (events.length === 0) throw new Error("No events in response");
 
-          updateEventMeta(event);
-          members = splitMembers(event);
+          members = { checked: [], accepted: [] };
+          matrix = buildMatrix(events);
           render();
+          syncCopyCheckinsButton();
+          syncRaffleButton();
           setStatus(`Updated ${formatTime(new Date())}`, "ok");
         } catch (err) {
           setStatus(`Update failed: ${err.message}`, "error");
@@ -851,7 +1637,7 @@
       });
 
       els.campfireLink.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
+        if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
           event.preventDefault();
           update();
         }
@@ -865,6 +1651,33 @@
         promptCopy(members.accepted, "Accepted");
       });
 
+      if (els.copyMultiCheckins) {
+        els.copyMultiCheckins.addEventListener("click", () => {
+          openCheckinCopyModal();
+        });
+      }
+
+      if (els.copyAllEventsToggle) {
+        els.copyAllEventsToggle.addEventListener("change", () => {
+          if (copyModalMode === "checkins") refreshCheckinCopyModal();
+        });
+      }
+
+      if (els.raffleBtn) {
+        els.raffleBtn.addEventListener("click", openRaffleModal);
+      }
+      if (els.raffleModalClose) {
+        els.raffleModalClose.addEventListener("click", closeRaffleModal);
+      }
+      if (els.raffleDrawBtn) {
+        els.raffleDrawBtn.addEventListener("click", runRaffle);
+      }
+      if (els.raffleModal) {
+        els.raffleModal.addEventListener("click", (event) => {
+          if (event.target === els.raffleModal) closeRaffleModal();
+        });
+      }
+
       els.copyModalClose.addEventListener("click", closeCopyModal);
       els.copyModalCopy.addEventListener("click", copyModalText);
 
@@ -873,9 +1686,9 @@
       });
 
       document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape" && !els.copyModal.hidden) {
-          closeCopyModal();
-        }
+        if (event.key !== "Escape") return;
+        if (!els.copyModal.hidden) closeCopyModal();
+        if (els.raffleModal && !els.raffleModal.hidden) closeRaffleModal();
       });
 
       els.updateBtn.addEventListener("click", update);
