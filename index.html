@@ -181,6 +181,181 @@
         line-height: 1.35;
       }
 
+      .hint-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.35rem 0.75rem;
+      }
+
+      .howto-btn {
+        appearance: none;
+        border: 0;
+        background: none;
+        padding: 0;
+        margin: 0;
+        color: var(--checked);
+        font: 600 0.78rem var(--font-body);
+        text-decoration: underline;
+        text-decoration-color: rgba(91, 168, 232, 0.45);
+        text-underline-offset: 0.14em;
+        cursor: pointer;
+      }
+
+      .howto-btn:hover {
+        color: #8ec5f5;
+        text-decoration-color: rgba(142, 197, 245, 0.8);
+      }
+
+      .howto-steps {
+        margin: 0;
+        padding-left: 1.25rem;
+        display: grid;
+        gap: 0.85rem;
+        color: var(--ink);
+        font-size: 0.95rem;
+        line-height: 1.45;
+      }
+
+      .howto-steps li::marker {
+        font-weight: 700;
+        color: var(--checked);
+      }
+
+      .howto-steps code {
+        display: inline;
+        word-break: break-all;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.82em;
+        color: #c5d8ef;
+      }
+
+      .source-select {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--panel);
+        color: var(--ink);
+        font: 600 0.95rem var(--font-display);
+        padding: 0.7rem 0.9rem;
+        outline: none;
+        cursor: pointer;
+      }
+
+      .source-select:focus {
+        border-color: rgba(91, 168, 232, 0.55);
+        box-shadow: 0 0 0 3px rgba(91, 168, 232, 0.15);
+      }
+
+      .club-panel {
+        display: grid;
+        gap: 0.65rem;
+        text-align: left;
+      }
+
+      .club-tools {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .club-tools .copy-btn {
+        padding: 0.45rem 0.7rem;
+      }
+
+      .club-list-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem 0.75rem;
+      }
+
+      .club-selected-count,
+      .club-list-count {
+        margin: 0;
+        font-size: 0.8rem;
+        color: var(--ink-muted);
+      }
+
+      .club-list-count {
+        margin-left: auto;
+        text-align: right;
+        font-weight: 600;
+      }
+
+      .event-grid {
+        display: grid;
+        gap: 0.55rem;
+        max-height: min(42vh, 360px);
+        overflow: auto;
+        padding: 0.15rem;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: rgba(6, 12, 24, 0.35);
+      }
+
+      .event-card {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.7rem 0.8rem;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: rgba(18, 28, 48, 0.9);
+        transition: border-color 0.15s ease, background 0.15s ease;
+        overflow-anchor: none;
+      }
+
+      .event-card.is-on {
+        border-color: rgba(91, 168, 232, 0.55);
+        background: rgba(30, 52, 84, 0.85);
+      }
+
+      .event-card-main {
+        min-width: 0;
+      }
+
+      .event-card-name {
+        margin: 0;
+        font-weight: 600;
+        font-size: 0.92rem;
+        color: var(--ink);
+        line-height: 1.3;
+        overflow-wrap: anywhere;
+      }
+
+      .event-card-meta {
+        margin: 0.25rem 0 0;
+        font-size: 0.78rem;
+        color: var(--ink-muted);
+      }
+
+      .event-card .copy-modal-option {
+        position: relative;
+        margin: 0;
+        gap: 0;
+      }
+
+      .event-card .copy-modal-option input {
+        /* Keep focus target inside the card so the page doesn't scroll jump. */
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        margin: 0;
+        cursor: pointer;
+        pointer-events: auto;
+      }
+
+      .event-card .copy-modal-option-text {
+        display: none;
+      }
+
       .update-btn {
         appearance: none;
         border: 1px solid rgba(91, 168, 232, 0.45);
@@ -447,6 +622,7 @@
       }
 
       .copy-modal-option {
+        position: relative;
         display: flex;
         align-items: center;
         gap: 0.75rem;
@@ -707,22 +883,8 @@
         gap: 0.55rem;
       }
 
-      @media (min-width: 560px) {
-        .matrix-action-btns {
-          grid-template-columns: 1fr 1fr;
-        }
-      }
-
-      @media (min-width: 900px) {
-        .matrix-action-btns {
-          grid-template-columns: auto auto;
-          justify-content: end;
-        }
-
-        .matrix-action-btns .update-btn {
-          width: auto;
-          min-width: 9.5rem;
-        }
+      .matrix-filter {
+        margin: 0;
       }
 
       .matrix-legend {
@@ -867,32 +1029,74 @@
         <h1 class="brand">PoGo Event Scan</h1>
       </div>
       <div class="status-block">
-        <p id="poll-status" class="poll-status">Press Update to load</p>
+        <p id="poll-status" class="poll-status">Press Show Event Table to load</p>
         <div class="controls">
           <label class="search">
-            <span class="sr-only">Campfire event links or meeting IDs</span>
-            <textarea
-              id="campfire-link"
-              placeholder="One Campfire link or meeting ID per line&#10;https://cmpf.re/…&#10;or event UUID"
-              autocomplete="off"
-              spellcheck="false"
-            >https://cmpf.re/KnRPxW</textarea>
+            <span class="sr-only">Event source</span>
+            <select id="source-mode" class="source-select">
+              <option value="manual">Event IDs</option>
+              <option value="tsp">TSP</option>
+            </select>
           </label>
-          <p class="hint">
-            Paste one or more Campfire links or meeting IDs (one per line), then
-            press Update.
-          </p>
-          <button id="update-btn" type="button" class="update-btn">Update</button>
-          <label class="search">
-            <span class="sr-only">Filter names</span>
-            <input
-              id="filter"
-              type="search"
-              placeholder="Filter names (not case-sensitive)"
-              autocomplete="off"
-              spellcheck="false"
-            />
-          </label>
+
+          <div id="manual-source">
+            <label class="search">
+              <span class="sr-only">Event IDs</span>
+              <textarea
+                id="campfire-link"
+                placeholder="One event ID or meetup URL per line&#10;https://campfire.nianticlabs.com/discover/meetup/1ac39c53-b444-45f6-9228-134545003b06"
+                autocomplete="off"
+                spellcheck="false"
+              ></textarea>
+            </label>
+            <div class="hint-row">
+              <p class="hint">
+                Enter event IDs or full Campfire meetup URLs, one per line.
+              </p>
+              <button
+                id="howto-event-id-btn"
+                type="button"
+                class="howto-btn"
+              >
+                How do I get a event ID?
+              </button>
+            </div>
+          </div>
+
+          <div id="club-source" class="club-panel hidden" hidden>
+            <div class="hint-row">
+              <p class="hint">
+                TSP club events — toggle events on to include them, then press
+                Show Event Table.
+              </p>
+              <button
+                id="howto-tsp-missing-btn"
+                type="button"
+                class="howto-btn"
+              >
+                Event missing from TSP?
+              </button>
+            </div>
+            <div class="club-list-bar">
+              <div class="club-tools">
+                <button id="club-select-all" type="button" class="copy-btn">
+                  Select all
+                </button>
+                <button id="club-clear" type="button" class="copy-btn">
+                  Clear
+                </button>
+                <p id="club-selected-count" class="club-selected-count">
+                  0 selected
+                </p>
+              </div>
+              <p id="club-list-count" class="club-list-count">0 in list</p>
+            </div>
+            <div id="club-events" class="event-grid" aria-live="polite"></div>
+          </div>
+
+          <button id="update-btn" type="button" class="update-btn">
+            Show Event Table
+          </button>
         </div>
       </div>
     </header>
@@ -944,6 +1148,16 @@
           <button id="raffle-btn" type="button" class="update-btn" disabled>
             Raffle
           </button>
+          <label class="search matrix-filter">
+            <span class="sr-only">Filter names</span>
+            <input
+              id="filter"
+              type="search"
+              placeholder="Filter names (not case-sensitive)"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </label>
         </div>
         <p class="matrix-legend">
           <span><span class="mark mark-checked" aria-hidden="true">✓</span> Checked in</span>
@@ -958,6 +1172,38 @@
         </div>
       </div>
     </section>
+
+    <div
+      id="howto-modal"
+      class="copy-modal"
+      hidden
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="howto-modal-title"
+    >
+      <div class="copy-modal-panel">
+        <div class="copy-modal-head">
+          <h2 id="howto-modal-title">How do I get a event ID?</h2>
+          <button id="howto-modal-close" type="button" class="copy-modal-close">
+            Close
+          </button>
+        </div>
+        <ol id="howto-modal-steps" class="howto-steps">
+          <li>
+            Click to “Share” the Campfire event; this should generate a link
+            like
+            <code>https://cmpf.re/my58qK</code>.
+          </li>
+          <li>
+            Paste this into a browser; the browser should navigate to a URL like
+            <code
+              >https://campfire.nianticlabs.com/discover/meetup/60e66913-7a36-4835-96fb-47fe7c5d3192</code
+            >. Copy that URL into the box above (one event per line). You can
+            paste the full URL — the event ID is parsed automatically.
+          </li>
+        </ol>
+      </div>
+    </div>
 
     <div
       id="copy-modal"
@@ -1036,8 +1282,25 @@
     </div>
 
     <script>
-      const DEFAULT_LINK = "https://cmpf.re/KnRPxW";
-      const STORAGE_KEY = "pogo-event-scan-campfire-links";
+      const DEFAULT_IDS = "";
+      const STORAGE_KEY = "pogo-event-scan-meeting-ids";
+      const STORAGE_SOURCE = "pogo-event-scan-source";
+      const STORAGE_CLUB_SELECTED = "pogo-event-scan-club-selected";
+      const STORAGE_TSP_EXTRAS = "pogo-event-scan-tsp-extras";
+      const MEETING_ID_RE =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      const EVENT_ID_IN_TEXT_RE =
+        /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+      const IMPORT_MAX_ATTEMPTS = 8;
+      const IMPORT_RETRY_MS = 2000;
+      const EVENTS_GET_CHUNK = 8;
+
+      const CLUBS = {
+        tsp: {
+          id: "6c9a1e10-f74f-457e-bb3b-d1c97c6cd6d7",
+          label: "TSP",
+        },
+      };
 
       const STATUS = {
         CHECKED_IN: "CHECKED_IN",
@@ -1053,7 +1316,21 @@
 
       const els = {
         pollStatus: document.getElementById("poll-status"),
+        sourceMode: document.getElementById("source-mode"),
+        manualSource: document.getElementById("manual-source"),
+        clubSource: document.getElementById("club-source"),
+        clubEvents: document.getElementById("club-events"),
+        clubSelectedCount: document.getElementById("club-selected-count"),
+        clubListCount: document.getElementById("club-list-count"),
+        clubSelectAll: document.getElementById("club-select-all"),
+        clubClear: document.getElementById("club-clear"),
         campfireLink: document.getElementById("campfire-link"),
+        howtoEventIdBtn: document.getElementById("howto-event-id-btn"),
+        howtoTspMissingBtn: document.getElementById("howto-tsp-missing-btn"),
+        howtoModal: document.getElementById("howto-modal"),
+        howtoModalTitle: document.getElementById("howto-modal-title"),
+        howtoModalSteps: document.getElementById("howto-modal-steps"),
+        howtoModalClose: document.getElementById("howto-modal-close"),
         updateBtn: document.getElementById("update-btn"),
         filter: document.getElementById("filter"),
         boards: document.getElementById("boards"),
@@ -1084,7 +1361,17 @@
       };
 
       const savedLinks = localStorage.getItem(STORAGE_KEY);
-      if (savedLinks) els.campfireLink.value = savedLinks;
+      if (savedLinks) {
+        els.campfireLink.value = savedLinks
+          .split(/[\n,]+/)
+          .map((part) => part.trim())
+          .filter((part) =>
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+              part
+            )
+          )
+          .join("\n");
+      }
 
       /** @type {{ checked: string[], accepted: string[] }} */
       let members = { checked: [], accepted: [] };
@@ -1094,13 +1381,59 @@
       let copyModalMode = "plain"; // "plain" | "checkins"
       let raffleTimer = null;
       let raffleRunning = false;
+      /** @type {any[]} */
+      let clubEventsCache = [];
+      /** @type {Set<string>} */
+      let clubSelectedIds = new Set();
+      /** @type {any[]} */
+      let tspExtraEvents = [];
+      let clubListLoaded = false;
+
+      try {
+        const savedSelected = JSON.parse(
+          localStorage.getItem(STORAGE_CLUB_SELECTED) || "[]"
+        );
+        if (Array.isArray(savedSelected)) {
+          clubSelectedIds = new Set(savedSelected.filter(Boolean));
+        }
+      } catch {
+        clubSelectedIds = new Set();
+      }
+
+      try {
+        const savedExtras = JSON.parse(
+          localStorage.getItem(STORAGE_TSP_EXTRAS) || "[]"
+        );
+        if (Array.isArray(savedExtras)) {
+          tspExtraEvents = savedExtras.filter((e) => e?.id);
+        }
+      } catch {
+        tspExtraEvents = [];
+      }
+
+      const HOWTO_EVENT_ID = {
+        title: "How do I get a event ID?",
+        steps: [
+          `Click to “Share” the Campfire event; this should generate a link like <code>https://cmpf.re/my58qK</code>.`,
+          `Paste this into a browser; the browser should navigate to a URL like <code>https://campfire.nianticlabs.com/discover/meetup/60e66913-7a36-4835-96fb-47fe7c5d3192</code>. Copy that URL into the box above (one event per line). You can paste the full URL — the event ID is parsed automatically.`,
+        ],
+      };
+
+      const HOWTO_TSP_MISSING = {
+        title: "Event missing from TSP?",
+        steps: [
+          `In the dropdown, choose <strong>Event IDs</strong> instead of <strong>TSP</strong>.`,
+          `Paste the missing event ID or full Campfire meetup URL, then press <strong>Show Event Table</strong>.`,
+          `That event is added to your TSP list (turned on). Switch back to <strong>TSP</strong> anytime to toggle it with the other club events.`,
+        ],
+      };
 
       function matchesNameFilter(name, query) {
         if (!query) return true;
         return name.toLocaleLowerCase().includes(query);
       }
 
-      function parseLinks(raw) {
+      function parseRawEntries(raw) {
         return [
           ...new Set(
             raw
@@ -1111,12 +1444,432 @@
         ];
       }
 
-      function buildFetchUrl(links) {
-        const eventsApi =
-          "https://cmpf-tools.de/api/events?events=" +
-          encodeURIComponent(links.join(","));
-        // Upstream API has no CORS headers; corsproxy.io allows github.io + localhost.
-        return "https://corsproxy.io/?" + encodeURIComponent(eventsApi);
+      function extractEventId(entry) {
+        const trimmed = entry.trim();
+        if (!trimmed) return null;
+        if (MEETING_ID_RE.test(trimmed)) return trimmed.toLowerCase();
+
+        try {
+          const url = new URL(trimmed);
+          const fromPath = url.pathname.match(EVENT_ID_IN_TEXT_RE);
+          if (fromPath) return fromPath[0].toLowerCase();
+        } catch {
+          // Not a full URL — fall through to any UUID in the text.
+        }
+
+        const embedded = trimmed.match(EVENT_ID_IN_TEXT_RE);
+        return embedded ? embedded[0].toLowerCase() : null;
+      }
+
+      function parseEventIds(raw) {
+        const entries = parseRawEntries(raw);
+        const ids = [];
+        const rejected = [];
+
+        for (const entry of entries) {
+          const id = extractEventId(entry);
+          if (id) ids.push(id);
+          else rejected.push(entry);
+        }
+
+        return { ids: [...new Set(ids)], rejected };
+      }
+
+      const API_BASE = "https://campfireproxy.fmwyso.workers.dev";
+
+      function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
+      function httpErrorMessage(res, context = "") {
+        const where = context ? ` while ${context}` : "";
+        if (res.status === 413) {
+          return (
+            `HTTP 413${where}: the request or response was too large for the proxy. ` +
+            `Try fewer event IDs, or select a smaller set of events.`
+          );
+        }
+        return `HTTP ${res.status}${where}`;
+      }
+
+      function buildFetchUrl(ids) {
+        return (
+          `${API_BASE}/api/events?events=` +
+          encodeURIComponent(ids.join(","))
+        );
+      }
+
+      function buildClubEventsUrl(clubId) {
+        return `${API_BASE}/api/clubs/${clubId}/events`;
+      }
+
+      async function importEvent(
+        eventId,
+        { required = true, maxAttempts = IMPORT_MAX_ATTEMPTS } = {}
+      ) {
+        const url = `${API_BASE}/api/events`;
+        const payload = JSON.stringify([eventId]);
+        let lastError = "unknown error";
+
+        for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+          try {
+            const res = await fetch(url, {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json; charset=UTF-8",
+              },
+              body: payload,
+              cache: "no-store",
+            });
+
+            if (res.ok) return true;
+
+            const detail = (await res.text()).trim();
+            lastError = detail
+              ? `${httpErrorMessage(res, `importing ${eventId}`)} — ${detail}`
+              : httpErrorMessage(res, `importing ${eventId}`);
+            if (required) {
+              setStatus(
+                `${lastError} · retry ${attempt}/${maxAttempts}…`,
+                "error"
+              );
+            }
+          } catch (err) {
+            lastError = err.message || String(err);
+            if (required) {
+              setStatus(
+                `Import error for ${eventId}: ${lastError} · retry ${attempt}/${maxAttempts}…`,
+                "error"
+              );
+            }
+          }
+
+          await sleep(IMPORT_RETRY_MS);
+        }
+
+        if (required) {
+          throw new Error(`Import failed for ${eventId}: ${lastError}`);
+        }
+        return false;
+      }
+
+      async function importEvents(
+        ids,
+        label = "events",
+        { required = true, maxAttempts = IMPORT_MAX_ATTEMPTS } = {}
+      ) {
+        for (let i = 0; i < ids.length; i += 1) {
+          setStatus(`Importing ${label} ${i + 1}/${ids.length}…`);
+          await importEvent(ids[i], { required, maxAttempts });
+        }
+      }
+
+      async function getEventsByIds(ids) {
+        const all = [];
+        const missing = [];
+
+        for (let i = 0; i < ids.length; i += EVENTS_GET_CHUNK) {
+          const chunk = ids.slice(i, i + EVENTS_GET_CHUNK);
+          setStatus(
+            `Fetching events ${Math.min(i + EVENTS_GET_CHUNK, ids.length)}/${ids.length}…`
+          );
+          const res = await fetch(buildFetchUrl(chunk), { cache: "no-store" });
+          if (!res.ok) {
+            // Chunk may mix known + never-imported; fall back to per-id GET.
+            for (const id of chunk) {
+              const one = await fetch(buildFetchUrl([id]), {
+                cache: "no-store",
+              });
+              if (!one.ok) {
+                missing.push(id);
+                continue;
+              }
+              const data = await one.json();
+              const events = Array.isArray(data)
+                ? data.filter(Boolean)
+                : data
+                  ? [data]
+                  : [];
+              if (events.length === 0) missing.push(id);
+              else all.push(...events);
+            }
+            continue;
+          }
+          const data = await res.json();
+          const events = Array.isArray(data)
+            ? data.filter(Boolean)
+            : data
+              ? [data]
+              : [];
+          const got = new Set(events.map((e) => e.id).filter(Boolean));
+          all.push(...events);
+          for (const id of chunk) {
+            if (!got.has(id)) missing.push(id);
+          }
+        }
+
+        return { events: all, missing };
+      }
+
+      async function fetchEventsByIds(ids) {
+        if (ids.length === 0) return [];
+
+        // Prefer GET first. POST import via the Worker often returns HTTP 400 EOF
+        // (empty body forwarded upstream). GET already works for known events and
+        // refreshes attendees when Campfire Tools data is older than ~1 hour.
+        let { events, missing } = await getEventsByIds(ids);
+
+        if (missing.length > 0) {
+          await importEvents(missing, "new event IDs", {
+            required: true,
+            maxAttempts: IMPORT_MAX_ATTEMPTS,
+          });
+          const retry = await getEventsByIds(missing);
+          events = events.concat(retry.events);
+          if (retry.missing.length > 0) {
+            throw new Error(
+              `Could not load event ID(s): ${retry.missing.join(", ")}. ` +
+                `Import via the proxy failed (often HTTP 400 EOF). ` +
+                `Redeploy campfire-proxy-worker.js to your Cloudflare Worker, then retry.`
+            );
+          }
+        }
+
+        return events;
+      }
+
+      function currentSource() {
+        return els.sourceMode?.value || "manual";
+      }
+
+      function persistClubSelection() {
+        localStorage.setItem(
+          STORAGE_CLUB_SELECTED,
+          JSON.stringify([...clubSelectedIds])
+        );
+      }
+
+      function persistTspExtras() {
+        localStorage.setItem(
+          STORAGE_TSP_EXTRAS,
+          JSON.stringify(tspExtraEvents)
+        );
+      }
+
+      function eventListStub(event, { manual = false } = {}) {
+        return {
+          id: event.id,
+          name: event.name || "Untitled event",
+          time: event.time,
+          end_time: event.end_time,
+          members: event.members || [],
+          manual: Boolean(manual),
+        };
+      }
+
+      function mergeClubCacheWithExtras() {
+        const ids = new Set(
+          clubEventsCache.map((event) => event?.id).filter(Boolean)
+        );
+        for (const extra of tspExtraEvents) {
+          if (!extra?.id || ids.has(extra.id)) continue;
+          clubEventsCache.push({ ...extra, manual: true });
+          ids.add(extra.id);
+        }
+      }
+
+      function addEventsToTspList(events) {
+        const clubApiIds = new Set(
+          clubEventsCache
+            .filter((event) => event?.id && !event.manual)
+            .map((event) => event.id)
+        );
+
+        for (const event of events) {
+          if (!event?.id) continue;
+          clubSelectedIds.add(event.id);
+
+          const alreadyInClubApi = clubApiIds.has(event.id);
+          if (!alreadyInClubApi) {
+            const stub = eventListStub(event, { manual: true });
+            const extraIdx = tspExtraEvents.findIndex((e) => e.id === event.id);
+            if (extraIdx >= 0) tspExtraEvents[extraIdx] = stub;
+            else tspExtraEvents.push(stub);
+
+            const cacheIdx = clubEventsCache.findIndex(
+              (e) => e.id === event.id
+            );
+            if (cacheIdx >= 0) clubEventsCache[cacheIdx] = stub;
+            else clubEventsCache.push(stub);
+          } else {
+            const cacheIdx = clubEventsCache.findIndex(
+              (e) => e.id === event.id
+            );
+            if (cacheIdx >= 0) {
+              clubEventsCache[cacheIdx] = {
+                ...clubEventsCache[cacheIdx],
+                name: event.name || clubEventsCache[cacheIdx].name,
+                time: event.time || clubEventsCache[cacheIdx].time,
+                end_time: event.end_time || clubEventsCache[cacheIdx].end_time,
+                members: event.members || clubEventsCache[cacheIdx].members,
+              };
+            }
+            tspExtraEvents = tspExtraEvents.filter((e) => e.id !== event.id);
+          }
+        }
+
+        persistTspExtras();
+        persistClubSelection();
+      }
+
+      function updateClubSelectedCount() {
+        if (!els.clubSelectedCount) return;
+        const n = clubSelectedIds.size;
+        els.clubSelectedCount.textContent = `${n} selected`;
+      }
+
+      function updateClubListCount() {
+        if (!els.clubListCount) return;
+        const n = clubEventsCache.length;
+        els.clubListCount.textContent = `${n} in list`;
+      }
+
+      function eventSummary(event) {
+        const members = event.members || [];
+        const checked = members.filter(
+          (m) => m.rsvp_status === STATUS.CHECKED_IN
+        ).length;
+        const accepted = members.filter(
+          (m) => m.rsvp_status === STATUS.ACCEPTED
+        ).length;
+        return { checked, accepted, total: members.length };
+      }
+
+      function renderClubEvents() {
+        if (!els.clubEvents) return;
+        els.clubEvents.replaceChildren();
+
+        if (clubEventsCache.length === 0) {
+          const empty = document.createElement("p");
+          empty.className = "hint";
+          empty.style.padding = "0.75rem";
+          empty.textContent = "No club events loaded yet.";
+          els.clubEvents.append(empty);
+          updateClubSelectedCount();
+          updateClubListCount();
+          return;
+        }
+
+        const sorted = [...clubEventsCache].sort(
+          (a, b) =>
+            new Date(b.time || 0).getTime() - new Date(a.time || 0).getTime()
+        );
+
+        for (const event of sorted) {
+          if (!event?.id) continue;
+          const on = clubSelectedIds.has(event.id);
+          const summary = eventSummary(event);
+
+          const card = document.createElement("div");
+          card.className = `event-card${on ? " is-on" : ""}`;
+          card.dataset.eventId = event.id;
+
+          const main = document.createElement("div");
+          main.className = "event-card-main";
+
+          const name = document.createElement("p");
+          name.className = "event-card-name";
+          name.textContent = event.name || "Untitled event";
+
+          const meta = document.createElement("p");
+          meta.className = "event-card-meta";
+          const day = event.time ? formatDay(event.time) : "Unknown date";
+          const manualTag = event.manual ? " · added manually" : "";
+          meta.textContent = `${day} · ✓ ${summary.checked} · ~ ${summary.accepted}${manualTag}`;
+
+          main.append(name, meta);
+
+          const toggleLabel = document.createElement("label");
+          toggleLabel.className = "copy-modal-option";
+          const input = document.createElement("input");
+          input.type = "checkbox";
+          input.checked = on;
+          input.setAttribute("aria-label", `Include ${event.name || "event"}`);
+          input.addEventListener("change", () => {
+            if (input.checked) clubSelectedIds.add(event.id);
+            else clubSelectedIds.delete(event.id);
+            card.classList.toggle("is-on", input.checked);
+            persistClubSelection();
+            updateClubSelectedCount();
+          });
+          // Avoid page scroll when the browser focuses the visually-hidden input.
+          toggleLabel.addEventListener("mousedown", (event_) => {
+            event_.preventDefault();
+          });
+
+          const track = document.createElement("span");
+          track.className = "toggle-track";
+          track.setAttribute("aria-hidden", "true");
+          track.innerHTML = '<span class="toggle-thumb"></span>';
+
+          toggleLabel.append(input, track);
+          card.append(main, toggleLabel);
+          els.clubEvents.append(card);
+        }
+
+        updateClubSelectedCount();
+        updateClubListCount();
+      }
+
+      async function loadClubEvents(clubKey) {
+        const club = CLUBS[clubKey];
+        if (!club) throw new Error("Unknown club");
+
+        setStatus(`Loading ${club.label} events…`);
+        const res = await fetch(buildClubEventsUrl(club.id), {
+          cache: "no-store",
+        });
+        if (!res.ok) throw new Error(httpErrorMessage(res, "loading club events"));
+
+        const data = await res.json();
+        clubEventsCache = Array.isArray(data) ? data.filter(Boolean) : [];
+        clubListLoaded = true;
+        mergeClubCacheWithExtras();
+
+        // Drop selections that no longer exist (club + manual extras).
+        const valid = new Set(clubEventsCache.map((e) => e.id).filter(Boolean));
+        clubSelectedIds = new Set(
+          [...clubSelectedIds].filter((id) => valid.has(id))
+        );
+        persistClubSelection();
+        renderClubEvents();
+
+        setStatus("Press Show Event Table to load", "ok");
+      }
+
+      async function setSourceMode(mode, { load = true } = {}) {
+        const next = mode === "tsp" ? "tsp" : "manual";
+        if (els.sourceMode) els.sourceMode.value = next;
+        localStorage.setItem(STORAGE_SOURCE, next);
+
+        const isClub = next !== "manual";
+        if (els.manualSource) {
+          els.manualSource.classList.toggle("hidden", isClub);
+          els.manualSource.hidden = isClub;
+        }
+        if (els.clubSource) {
+          els.clubSource.classList.toggle("hidden", !isClub);
+          els.clubSource.hidden = !isClub;
+        }
+
+        if (isClub && load) {
+          try {
+            await loadClubEvents(next);
+          } catch (err) {
+            setStatus(`Club load failed: ${err.message}`, "error");
+          }
+        }
       }
 
       function setStatus(text, state = "") {
@@ -1139,6 +1892,7 @@
           weekday: "short",
           month: "short",
           day: "numeric",
+          year: "numeric",
         });
       }
 
@@ -1600,22 +2354,60 @@
       }
 
       async function update() {
-        const raw = els.campfireLink.value.trim() || DEFAULT_LINK;
-        const links = parseLinks(raw);
-        if (links.length === 0) links.push(DEFAULT_LINK);
-
-        els.campfireLink.value = links.join("\n");
-        localStorage.setItem(STORAGE_KEY, els.campfireLink.value);
-
         els.updateBtn.disabled = true;
-        setStatus("Updating…");
+        setStatus("Loading event table…");
 
         try {
-          const res = await fetch(buildFetchUrl(links), { cache: "no-store" });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          let events = [];
+          const source = currentSource();
 
-          const data = await res.json();
-          const events = Array.isArray(data) ? data.filter(Boolean) : data ? [data] : [];
+          if (source !== "manual") {
+            if (clubEventsCache.length === 0) {
+              await loadClubEvents(source);
+            }
+
+            const selectedIds = clubEventsCache
+              .filter((event) => clubSelectedIds.has(event.id))
+              .map((event) => event.id);
+
+            if (selectedIds.length === 0) {
+              throw new Error("Select at least one TSP event");
+            }
+
+            events = await fetchEventsByIds(selectedIds);
+          } else {
+            const raw = els.campfireLink.value.trim();
+            const { ids, rejected } = parseEventIds(raw);
+
+            if (rejected.length > 0) {
+              throw new Error(
+                `Could not find an event ID in: ${rejected
+                  .slice(0, 3)
+                  .join(", ")}${rejected.length > 3 ? "…" : ""}. ` +
+                  `Use a UUID or a full campfire.nianticlabs.com meetup URL.`
+              );
+            }
+            if (ids.length === 0) {
+              throw new Error("Enter at least one event ID");
+            }
+
+            els.campfireLink.value = ids.join("\n");
+            localStorage.setItem(STORAGE_KEY, els.campfireLink.value);
+            events = await fetchEventsByIds(ids);
+
+            addEventsToTspList(events);
+            if (!clubListLoaded) {
+              try {
+                await loadClubEvents("tsp");
+                addEventsToTspList(events);
+              } catch {
+                mergeClubCacheWithExtras();
+              }
+            }
+            await setSourceMode("tsp", { load: false });
+            renderClubEvents();
+          }
+
           if (events.length === 0) throw new Error("No events in response");
 
           members = { checked: [], accepted: [] };
@@ -1623,18 +2415,62 @@
           render();
           syncCopyCheckinsButton();
           syncRaffleButton();
-          setStatus(`Updated ${formatTime(new Date())}`, "ok");
+          const tspNote =
+            source === "manual" ? " · added to TSP list" : "";
+          setStatus(`Showing table · ${formatTime(new Date())}${tspNote}`, "ok");
         } catch (err) {
-          setStatus(`Update failed: ${err.message}`, "error");
+          setStatus(`Show Event Table failed: ${err.message}`, "error");
         } finally {
           els.updateBtn.disabled = false;
         }
+      }
+
+      function openHowtoModal(content = HOWTO_EVENT_ID) {
+        if (!els.howtoModal || !els.howtoModalSteps) return;
+        if (els.howtoModalTitle) els.howtoModalTitle.textContent = content.title;
+        els.howtoModalSteps.replaceChildren();
+        for (const step of content.steps) {
+          const li = document.createElement("li");
+          li.innerHTML = step;
+          els.howtoModalSteps.append(li);
+        }
+        els.howtoModal.hidden = false;
+        els.howtoModalClose?.focus();
+      }
+
+      function closeHowtoModal() {
+        if (!els.howtoModal) return;
+        els.howtoModal.hidden = true;
       }
 
       els.filter.addEventListener("input", () => {
         filterText = els.filter.value;
         render();
       });
+
+      if (els.sourceMode) {
+        els.sourceMode.addEventListener("change", () => {
+          setSourceMode(els.sourceMode.value);
+        });
+      }
+
+      if (els.clubSelectAll) {
+        els.clubSelectAll.addEventListener("click", () => {
+          for (const event of clubEventsCache) {
+            if (event?.id) clubSelectedIds.add(event.id);
+          }
+          persistClubSelection();
+          renderClubEvents();
+        });
+      }
+
+      if (els.clubClear) {
+        els.clubClear.addEventListener("click", () => {
+          clubSelectedIds.clear();
+          persistClubSelection();
+          renderClubEvents();
+        });
+      }
 
       els.campfireLink.addEventListener("keydown", (event) => {
         if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
@@ -1685,13 +2521,36 @@
         if (event.target === els.copyModal) closeCopyModal();
       });
 
+      if (els.howtoEventIdBtn) {
+        els.howtoEventIdBtn.addEventListener("click", () => {
+          openHowtoModal(HOWTO_EVENT_ID);
+        });
+      }
+      if (els.howtoTspMissingBtn) {
+        els.howtoTspMissingBtn.addEventListener("click", () => {
+          openHowtoModal(HOWTO_TSP_MISSING);
+        });
+      }
+      if (els.howtoModalClose) {
+        els.howtoModalClose.addEventListener("click", closeHowtoModal);
+      }
+      if (els.howtoModal) {
+        els.howtoModal.addEventListener("click", (event) => {
+          if (event.target === els.howtoModal) closeHowtoModal();
+        });
+      }
+
       document.addEventListener("keydown", (event) => {
         if (event.key !== "Escape") return;
+        if (els.howtoModal && !els.howtoModal.hidden) closeHowtoModal();
         if (!els.copyModal.hidden) closeCopyModal();
         if (els.raffleModal && !els.raffleModal.hidden) closeRaffleModal();
       });
 
       els.updateBtn.addEventListener("click", update);
+
+      const initialSource = localStorage.getItem(STORAGE_SOURCE) || "manual";
+      setSourceMode(initialSource, { load: initialSource !== "manual" });
     </script>
   </body>
 </html>
