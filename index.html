@@ -1293,7 +1293,9 @@
         /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
       const IMPORT_MAX_ATTEMPTS = 8;
       const IMPORT_RETRY_MS = 2000;
+      const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
       const EVENTS_GET_CHUNK = 8;
+      const SOFT_IMPORT_CONCURRENCY = 4;
 
       const CLUBS = {
         tsp: {
@@ -1501,6 +1503,42 @@
 
       function buildClubEventsUrl(clubId) {
         return `${API_BASE}/api/clubs/${clubId}/events`;
+      }
+
+      function isRecentOrUpcoming(event, now = Date.now()) {
+        const start = new Date(event.time || 0).getTime();
+        if (Number.isNaN(start)) return false;
+        const end = event.end_time
+          ? new Date(event.end_time).getTime()
+          : start;
+        const cutoff = now - WEEK_MS;
+        return start >= cutoff || (!Number.isNaN(end) && end >= cutoff);
+      }
+
+      async function softImportEvent(eventId) {
+        try {
+          await fetch(`${API_BASE}/api/events`, {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json; charset=UTF-8",
+            },
+            body: JSON.stringify([eventId]),
+            cache: "no-store",
+          });
+        } catch {
+          // Best-effort only — club list reload still happens after.
+        }
+      }
+
+      async function softImportEvents(ids) {
+        for (let i = 0; i < ids.length; i += SOFT_IMPORT_CONCURRENCY) {
+          const chunk = ids.slice(i, i + SOFT_IMPORT_CONCURRENCY);
+          setStatus(
+            `Refreshing recent/upcoming ${Math.min(i + chunk.length, ids.length)}/${ids.length}…`
+          );
+          await Promise.all(chunk.map((id) => softImportEvent(id)));
+        }
       }
 
       async function importEvent(
@@ -1822,28 +1860,46 @@
         updateClubListCount();
       }
 
-      async function loadClubEvents(clubKey) {
-        const club = CLUBS[clubKey];
-        if (!club) throw new Error("Unknown club");
-
-        setStatus(`Loading ${club.label} events…`);
-        const res = await fetch(buildClubEventsUrl(club.id), {
+      async function fetchClubEventsList(clubId) {
+        const res = await fetch(buildClubEventsUrl(clubId), {
           cache: "no-store",
         });
         if (!res.ok) throw new Error(httpErrorMessage(res, "loading club events"));
-
         const data = await res.json();
-        clubEventsCache = Array.isArray(data) ? data.filter(Boolean) : [];
+        return Array.isArray(data) ? data.filter(Boolean) : [];
+      }
+
+      function applyClubEventsList(events) {
+        clubEventsCache = events;
         clubListLoaded = true;
         mergeClubCacheWithExtras();
 
-        // Drop selections that no longer exist (club + manual extras).
         const valid = new Set(clubEventsCache.map((e) => e.id).filter(Boolean));
         clubSelectedIds = new Set(
           [...clubSelectedIds].filter((id) => valid.has(id))
         );
         persistClubSelection();
         renderClubEvents();
+      }
+
+      async function loadClubEvents(clubKey) {
+        const club = CLUBS[clubKey];
+        if (!club) throw new Error("Unknown club");
+
+        setStatus(`Loading ${club.label} events…`);
+        applyClubEventsList(await fetchClubEventsList(club.id));
+
+        const refreshIds = clubEventsCache
+          .filter((event) => event?.id && isRecentOrUpcoming(event))
+          .map((event) => event.id);
+
+        if (refreshIds.length > 0) {
+          // 1) POST event IDs so Campfire Tools refreshes attendees
+          await softImportEvents(refreshIds);
+          // 2) Reload club list for the updated counts
+          setStatus(`Reloading ${club.label} events…`);
+          applyClubEventsList(await fetchClubEventsList(club.id));
+        }
 
         setStatus("Press Show Event Table to load", "ok");
       }
